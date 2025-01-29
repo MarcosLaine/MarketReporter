@@ -7,8 +7,7 @@ import mplcyberpunk
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from email.mime.base import MIMEBase
-from email import encoders
+from email.mime.image import MIMEImage
 import json
 import os
 
@@ -33,47 +32,21 @@ plt.style.use("cyberpunk")
 output_path = "../img"
 os.makedirs(output_path, exist_ok=True)
 
-# Gráfico IBOVESPA
-plt.figure()
-plt.plot(market_data["IBOVESPA"])
-plt.title("IBOVESPA")
-plt.savefig(os.path.join(output_path, "ibovespa.png"))
-plt.close()
+# Função para salvar gráficos
+def salvar_grafico(nome, dados):
+    plt.figure()
+    plt.plot(dados)
+    plt.title(nome)
+    plt.savefig(os.path.join(output_path, f"{nome.lower()}.png"))
+    plt.close()
 
-# Gráfico DOLAR
-plt.figure()
-plt.plot(market_data["DOLAR"])
-plt.title("DOLAR")
-plt.savefig(os.path.join(output_path, "dolar.png"))
-plt.close()
-
-# Gráfico S&P500
-plt.figure()
-plt.plot(market_data["S&P500"])
-plt.title("S&P500")
-plt.savefig(os.path.join(output_path, "sp500.png"))
-plt.close()
-
-# Gráfico BTC
-plt.figure()
-plt.plot(market_data["BTC"])
-plt.title("BTC")
-plt.savefig(os.path.join(output_path, "btc.png"))
-plt.close()
-
-# Gráfico EURO
-plt.figure()
-plt.plot(market_data["EURO"])
-plt.title("EURO")
-plt.savefig(os.path.join(output_path, "euro.png"))
-plt.close()
-
-# Gráfico NASDAQ
-plt.figure()
-plt.plot(market_data["NASDAQ"])
-plt.title("NASDAQ")
-plt.savefig(os.path.join(output_path, "nasdaq.png"))
-plt.close()
+# Salvar gráficos
+salvar_grafico("IBOVESPA", market_data["IBOVESPA"])
+salvar_grafico("DOLAR", market_data["DOLAR"])
+salvar_grafico("S&P500", market_data["S&P500"])
+salvar_grafico("BTC", market_data["BTC"])
+salvar_grafico("EURO", market_data["EURO"])
+salvar_grafico("NASDAQ", market_data["NASDAQ"])
 
 # Calcular retornos diários
 daily_returns = market_data.pct_change()
@@ -95,44 +68,43 @@ nasdaq_return = str(round(nasdaq_return * 100, 2)) + "%"
 # Configurar e enviar o e-mail usando Gmail
 def send_email_from_gmail():
     # Criar o objeto de mensagem
-    msg = MIMEMultipart()
+    msg = MIMEMultipart('related')
     msg['From'] = config['email']['sender']
     msg['To'] = ', '.join(config['email']['recipients'])
     msg['Subject'] = "Relatório Diário do Mercado"
 
-    # Corpo do e-mail
-    body = f'''Opaa, segue o relatório de mercado do dia {datetime.now().strftime("%d/%m/%Y")}:
-
-    * O Ibovespa teve o retorno de {ibovespa_return}, fechando em {market_data["IBOVESPA"].iloc[-1].round(2)}.
-    * O Dólar teve o retorno de {dolar_return}, fechando em {market_data["DOLAR"].iloc[-1].round(2)}.
-    * O S&P500 teve o retorno de {sp500_return}, fechando em {market_data["S&P500"].iloc[-1].round(2)}.
-    * O BTC teve o retorno de {btc_return}, fechando em {market_data["BTC"].iloc[-1].round(2)}.
-    * O EURO teve o retorno de {euro_return}, fechando em {market_data["EURO"].iloc[-1].round(2)}.
-    * O NASDAQ teve o retorno de {nasdaq_return}, fechando em {market_data["NASDAQ"].iloc[-1].round(2)}.
-    Segue em anexo a peformance dos ativos nos últimos 6 meses.
-
-    Att,
-    {config['email']['name']}
+    # Corpo do e-mail em HTML
+    body = f'''
+    <html>
+    <body>
+        <p>Olá! Segue o relatório de mercado do dia {datetime.now().strftime("%d/%m/%Y")}:</p>
+        <ul>
+            <li>O Ibovespa teve o retorno de {ibovespa_return}, fechando em {market_data["IBOVESPA"].iloc[-1].round(2)}.</li>
+            <li>O Dólar teve o retorno de {dolar_return}, fechando em {market_data["DOLAR"].iloc[-1].round(2)}.</li>
+            <li>O S&P500 teve o retorno de {sp500_return}, fechando em {market_data["S&P500"].iloc[-1].round(2)}.</li>
+            <li>O BTC teve o retorno de {btc_return}, fechando em {market_data["BTC"].iloc[-1].round(2)}.</li>
+            <li>O EURO teve o retorno de {euro_return}, fechando em {market_data["EURO"].iloc[-1].round(2)}.</li>
+            <li>O NASDAQ teve o retorno de {nasdaq_return}, fechando em {market_data["NASDAQ"].iloc[-1].round(2)}.</li>
+        </ul>
+        <p>Segue a performance dos ativos nos últimos 6 meses:</p>
+        <img src="cid:ibovespa"><br>
+        <img src="cid:dolar"><br>
+        <img src="cid:sp500"><br>
+        <img src="cid:btc"><br>
+        <img src="cid:euro"><br>
+        <img src="cid:nasdaq"><br>
+        <p>Att,<br>{config['email']['name']}</p>
+    </body>
+    </html>
     '''
-    msg.attach(MIMEText(body, 'plain'))
+    msg.attach(MIMEText(body, 'html'))
 
-    # Anexar arquivos
-    anexos = [
-        os.path.join(output_path, "ibovespa.png"),
-        os.path.join(output_path, "dolar.png"),
-        os.path.join(output_path, "sp500.png"),
-        os.path.join(output_path, "btc.png"),
-        os.path.join(output_path, "euro.png"),
-        os.path.join(output_path, "nasdaq.png")
-    ]
-
-    for anexo in anexos:
-        with open(anexo, "rb") as attachment:
-            part = MIMEBase('application', 'octet-stream')
-            part.set_payload(attachment.read())
-            encoders.encode_base64(part)
-            part.add_header('Content-Disposition', f'attachment; filename={os.path.basename(anexo)}')
-            msg.attach(part)
+    # Anexar imagens ao e-mail
+    for nome in ["ibovespa", "dolar", "sp500", "btc", "euro", "nasdaq"]:
+        with open(os.path.join(output_path, f"{nome}.png"), "rb") as img_file:
+            img = MIMEImage(img_file.read())
+            img.add_header('Content-ID', f'<{nome}>')
+            msg.attach(img)
 
     # Configurar o servidor SMTP
     server = smtplib.SMTP(config['smtp']['server'], config['smtp']['port'])
