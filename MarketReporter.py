@@ -103,7 +103,7 @@ def send_email_from_gmail():
     # Anexar arquivos
     import os
 
-    base_path = os.path.join(os.path.expanduser("~"), "OneDrive", "Área de Trabalho", "Programming", "MarketReporter")
+    base_path = os.path.dirname(os.path.abspath(__file__))
     anexos = [
         os.path.join(base_path, "ibovespa.png"),
         os.path.join(base_path, "dolar.png"),
