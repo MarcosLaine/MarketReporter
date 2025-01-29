@@ -1,5 +1,5 @@
 # Importação das bibliotecas necessárias
-import datetime
+from datetime import datetime
 import yfinance as yf
 import pandas as pd
 import matplotlib.pyplot as plt
