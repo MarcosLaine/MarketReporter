@@ -13,7 +13,8 @@ import json
 import os
 
 # Carrega as configurações do arquivo
-with open('../cfg/config.json', 'r') as f:
+config_path = os.path.join(os.path.dirname(__file__), '../cfg/config.json')
+with open(config_path, 'r') as f:
     config = json.load(f)
 
 # Pegar as cotações históricas
