@@ -1,0 +1,15 @@
+{
+    "email": {
+        "sender": "your_email@gmail.com",
+        "password": "your_app_password",
+        "recipients": [
+            "recipient1@email.com",
+            "recipient2@email.com"
+        ],
+        "name": "Your Name"
+    },
+    "smtp": {
+        "server": "smtp.gmail.com",
+        "port": 587
+    }
+}

@@ -10,9 +10,10 @@ from email.mime.text import MIMEText
 from email.mime.base import MIMEBase
 from email import encoders
 import json
+import os
 
 # Carrega as configurações do arquivo
-with open('config.json', 'r') as f:
+with open('../cfg/config.json', 'r') as f:
     config = json.load(f)
 
 # Pegar as cotações históricas
@@ -27,46 +28,50 @@ market_data.columns = ["DOLAR", "BTC", "EURO", "IBOVESPA", "S&P500", "NASDAQ"]
 # Criar gráficos de performance
 plt.style.use("cyberpunk")
 
+# Diretório de saída para imagens
+output_path = "../img"
+os.makedirs(output_path, exist_ok=True)
+
 # Gráfico IBOVESPA
 plt.figure()
 plt.plot(market_data["IBOVESPA"])
 plt.title("IBOVESPA")
-plt.savefig("ibovespa.png")
+plt.savefig(os.path.join(output_path, "ibovespa.png"))
 plt.close()
 
 # Gráfico DOLAR
 plt.figure()
 plt.plot(market_data["DOLAR"])
 plt.title("DOLAR")
-plt.savefig("dolar.png")
+plt.savefig(os.path.join(output_path, "dolar.png"))
 plt.close()
 
 # Gráfico S&P500
 plt.figure()
 plt.plot(market_data["S&P500"])
 plt.title("S&P500")
-plt.savefig("sp500.png")
+plt.savefig(os.path.join(output_path, "sp500.png"))
 plt.close()
 
 # Gráfico BTC
 plt.figure()
 plt.plot(market_data["BTC"])
 plt.title("BTC")
-plt.savefig("btc.png")
+plt.savefig(os.path.join(output_path, "btc.png"))
 plt.close()
 
 # Gráfico EURO
 plt.figure()
 plt.plot(market_data["EURO"])
 plt.title("EURO")
-plt.savefig("euro.png")
+plt.savefig(os.path.join(output_path, "euro.png"))
 plt.close()
 
 # Gráfico NASDAQ
 plt.figure()
 plt.plot(market_data["NASDAQ"])
 plt.title("NASDAQ")
-plt.savefig("nasdaq.png")
+plt.savefig(os.path.join(output_path, "nasdaq.png"))
 plt.close()
 
 # Calcular retornos diários
@@ -85,6 +90,7 @@ sp500_return = str(round(sp500_return * 100, 2)) + "%"
 btc_return = str(round(btc_return * 100, 2)) + "%"
 euro_return = str(round(euro_return * 100, 2)) + "%"
 nasdaq_return = str(round(nasdaq_return * 100, 2)) + "%"
+
 # Configurar e enviar o e-mail usando Gmail
 def send_email_from_gmail():
     # Criar o objeto de mensagem
@@ -110,16 +116,13 @@ def send_email_from_gmail():
     msg.attach(MIMEText(body, 'plain'))
 
     # Anexar arquivos
-    import os
-
-    base_path = os.path.dirname(os.path.abspath(__file__))
     anexos = [
-        os.path.join(base_path, "ibovespa.png"),
-        os.path.join(base_path, "dolar.png"),
-        os.path.join(base_path, "sp500.png"),
-        os.path.join(base_path, "btc.png"),
-        os.path.join(base_path, "euro.png"),
-        os.path.join(base_path, "nasdaq.png")
+        os.path.join(output_path, "ibovespa.png"),
+        os.path.join(output_path, "dolar.png"),
+        os.path.join(output_path, "sp500.png"),
+        os.path.join(output_path, "btc.png"),
+        os.path.join(output_path, "euro.png"),
+        os.path.join(output_path, "nasdaq.png")
     ]
 
     for anexo in anexos:
@@ -127,7 +130,7 @@ def send_email_from_gmail():
             part = MIMEBase('application', 'octet-stream')
             part.set_payload(attachment.read())
             encoders.encode_base64(part)
-            part.add_header('Content-Disposition', f'attachment; filename={anexo.split("\\")[-1]}')
+            part.add_header('Content-Disposition', f'attachment; filename={os.path.basename(anexo)}')
             msg.attach(part)
 
     # Configurar o servidor SMTP

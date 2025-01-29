@@ -1,11 +1,11 @@
 # Market Reporter 📈
 
-A Python script that automatically generates and sends daily market reports via email. The report includes a chart of the IBOVESPA, S&P500, EURBRL, NASDAQ, BTC and USDBRL and is scheduled to run automatically at market close.
+A Python script that automatically generates and sends daily market reports via email. The report includes charts of various market indices and is scheduled to run automatically at market close.
 
 ## Features 🌟
 
-- Automatically fetches IBOVESPA, S&P500, EURBRL, NASDAQ, BTC and USDBRL data
-- Generates a visual chart of the market performance
+- Automatically fetches data for IBOVESPA, DOLAR, S&P500, BTC, EURO, and NASDAQ
+- Generates visual charts of market performance
 - Sends automated email reports to configured recipients
 - Can be scheduled to run daily using Windows Task Scheduler
 - Secure configuration management for sensitive data
@@ -17,7 +17,7 @@ Before running the script, make sure you have:
 - Python 3.x installed
 - Anaconda or required Python packages
 - A Gmail account with App Password configured
-- Windows OS (for Task Scheduler functionality) or similar software to schedule the script
+- Windows OS (for Task Scheduler functionality)
 
 ### Required Python Packages
 
@@ -27,7 +27,7 @@ pip install yfinance pandas matplotlib email
 
 ## Configuration ⚙️
 
-1. Create a `config.json` file in the project root directory using the following template:
+1. Create a `config.json` file in the `cfg` directory using the following template:
 
 ```json
 {
@@ -65,11 +65,11 @@ git clone https://github.com/MarcosLaine/MarketReporter.git
 cd MarketReporter
 ```
 
-2. Create and configure your `config.json` file as shown above
+2. Create and configure your `config.json` file in the `cfg` directory as shown above
 
 3. Test the script:
 ```bash
-python MarketReporter.py
+python src/MarketReporter.py
 ```
 
 ## Scheduling Daily Execution ⏰
@@ -83,8 +83,8 @@ python MarketReporter.py
 5. Set the start time (recommended: after market close)
 6. In "Action", choose "Start a Program"
 7. Program/script: `C:\Path\To\Python\python.exe`
-8. Add arguments: `"C:\Path\To\Your\MarketReporter.py"`
-9. Set "Start in": `"C:\Path\To\Your\Script\Directory"`
+8. Add arguments: `"C:\Path\To\Your\src\MarketReporter.py"`
+9. Set "Start in": `C:\Path\To\Your\Script\Directory`
 
 ### Important Task Scheduler Settings
 
@@ -95,12 +95,25 @@ python MarketReporter.py
 ## Project Structure 📁
 
 ```
-MarketReporter/
+market-reporter/
 │
-├── MarketReporter.py     # Main script
-├── config.json           # Configuration file (not in repo)
-├── README.md            # This file
-└── .gitignore           # Git ignore file
+├── cfg/
+│   └── config.json           # Configuration file (not in repo)
+│   └── config.example.json    # Example configuration template
+│
+├── img/                      # Directory for output images
+│   ├── btc.png
+│   ├── dolar.png
+│   ├── euro.png
+│   ├── ibovespa.png
+│   ├── nasdaq.png
+│   └── sp500.png
+│
+├── src/
+│   └── MarketReporter.py     # Main script
+│
+├── .gitignore                # Git ignore file
+└── README.md                 # This file
 ```
 
 ## Troubleshooting 🔧
@@ -139,7 +152,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## Author ✨
 
-[Marcos Laine](https://github.com/MarcosLaine)
+[Marcos Paulo](https://github.com/MarcosLaine)
 
 ---
 
