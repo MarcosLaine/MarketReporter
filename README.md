@@ -1,10 +1,10 @@
 # Market Reporter 📈
 
-A Python script that automatically generates and sends daily market reports via email. The report includes a chart of the IBOVESPA, S&P500, EURBRL, BTC and USDBRL and is scheduled to run automatically at market close.
+A Python script that automatically generates and sends daily market reports via email. The report includes a chart of the IBOVESPA, S&P500, EURBRL, NASDAQ, BTC and USDBRL and is scheduled to run automatically at market close.
 
 ## Features 🌟
 
-- Automatically fetches IBOVESPA, S&P500, EURBRL, BTC and USDBRL data
+- Automatically fetches IBOVESPA, S&P500, EURBRL, NASDAQ, BTC and USDBRL data
 - Generates a visual chart of the market performance
 - Sends automated email reports to configured recipients
 - Can be scheduled to run daily using Windows Task Scheduler
