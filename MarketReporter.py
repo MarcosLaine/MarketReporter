@@ -101,12 +101,15 @@ def send_email_from_gmail():
     msg.attach(MIMEText(body, 'plain'))
 
     # Anexar arquivos
+    import os
+
+    base_path = os.path.join(os.path.expanduser("~"), "OneDrive", "Área de Trabalho", "Programming", "MarketReporter")
     anexos = [
-        r"path\to\MarketReporter\ibovespa.png",
-        r"path\to\MarketReporter\dolar.png",
-        r"path\to\MarketReporter\sp500.png",
-        r"path\to\MarketReporter\btc.png",
-        r"path\to\MarketReporter\euro.png"
+        os.path.join(base_path, "ibovespa.png"),
+        os.path.join(base_path, "dolar.png"),
+        os.path.join(base_path, "sp500.png"),
+        os.path.join(base_path, "btc.png"),
+        os.path.join(base_path, "euro.png")
     ]
 
     for anexo in anexos:
