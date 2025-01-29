@@ -10,6 +10,7 @@ from email.mime.text import MIMEText
 from email.mime.image import MIMEImage
 import json
 import os
+import requests
 
 # Carrega as configurações do arquivo
 config_path = os.path.join(os.path.dirname(__file__), '../cfg/config.json')
@@ -82,7 +83,7 @@ def send_email_from_gmail():
             <li>O Ibovespa teve o retorno de {ibovespa_return}, fechando em {market_data["IBOVESPA"].iloc[-1].round(2)}.</li>
             <li>O Dólar teve o retorno de {dolar_return}, fechando em {market_data["DOLAR"].iloc[-1].round(2)}.</li>
             <li>O S&P500 teve o retorno de {sp500_return}, fechando em {market_data["S&P500"].iloc[-1].round(2)}.</li>
-            <li>O BTC teve o retorno de {btc_return}, fechando em {market_data["BTC"].iloc[-1].round(2)}.</li>
+            <li>O BTC teve o retorno de {btc_return}, preço atual em {market_data["BTC"].iloc[-1].round(2)}.</li>
             <li>O EURO teve o retorno de {euro_return}, fechando em {market_data["EURO"].iloc[-1].round(2)}.</li>
             <li>O NASDAQ teve o retorno de {nasdaq_return}, fechando em {market_data["NASDAQ"].iloc[-1].round(2)}.</li>
         </ul>
@@ -122,3 +123,32 @@ def send_email_from_gmail():
 
 # Chamar a função para enviar o e-mail
 send_email_from_gmail()
+
+def send_pushover_notification():
+    user_key = config['pushover']['user_key']  # Get user key from config
+    api_token = config['pushover']['api_token']  # Get API token from config
+    message = f'''Relatório de Mercado do dia {datetime.now().strftime("%d/%m/%Y")}:
+    - IBOVESPA: {ibovespa_return} - Fechou em {market_data["IBOVESPA"].iloc[-1].round(2)}
+    - DÓLAR: {dolar_return} - Fechou em {market_data["DOLAR"].iloc[-1].round(2)}
+    - S&P500: {sp500_return} - Fechou em {market_data["S&P500"].iloc[-1].round(2)}
+    - BTC: {btc_return} - Preço atual em {market_data["BTC"].iloc[-1].round(2)}
+    - EURO: {euro_return} - Fechou em {market_data["EURO"].iloc[-1].round(2)}
+    - NASDAQ: {nasdaq_return} - Fechou em {market_data["NASDAQ"].iloc[-1].round(2)}
+    '''
+    
+    payload = {
+        "token": api_token,
+        "user": user_key,
+        "message": message,
+        "title": "Relatório de Mercado"
+    }
+    
+    response = requests.post("https://api.pushover.net/1/messages.json", data=payload)
+    
+    if response.status_code == 200:
+        print("Notificação enviada com sucesso!")
+    else:
+        print(f"Erro ao enviar notificação: {response.status_code} - {response.text}")
+
+# Chamar a função para enviar a notificação
+send_pushover_notification()

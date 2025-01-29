@@ -1,12 +1,13 @@
 # Market Reporter 📈
 
-A Python script that automatically generates and sends daily market reports via email. The report includes charts of various market indices and is scheduled to run automatically at market close.
+A Python script that automatically generates and sends daily market reports via email and pushover. The report includes charts of various market indices and is scheduled to run automatically at market close.
 
 ## Features 🌟
 
 - Automatically fetches data for IBOVESPA, DOLAR, S&P500, BTC, EURO, and NASDAQ
 - Generates visual charts of market performance
 - Sends automated email reports to configured recipients
+- Sends automated pushover notifications to configured recipients
 - Can be scheduled to run daily using Windows Task Scheduler
 - Secure configuration management for sensitive data
 
@@ -17,6 +18,7 @@ Before running the script, make sure you have:
 - Python 3.x installed
 - Anaconda or required Python packages
 - A Gmail account with App Password configured
+- Pushover account with user key and API token
 - Windows OS (for Task Scheduler functionality)
 
 ### Required Python Packages
@@ -43,6 +45,10 @@ pip install yfinance pandas matplotlib email
     "smtp": {
         "server": "smtp.gmail.com",
         "port": 587
+    },
+    "pushover": {
+        "user_key": "your_pushover_user_key",
+        "api_token": "your_pushover_api_token"
     }
 }
 ```
@@ -56,6 +62,12 @@ pip install yfinance pandas matplotlib email
    - Select 'App Passwords' under 2-Step Verification
    - Choose 'Mail' and your device
    - Use the generated password in your `config.json`
+
+### Pushover Setup
+
+1. Create an account on [Pushover](https://pushover.net/).
+2. Create a new application to get your `User Key` and `API Token`.
+3. Use these credentials in your `config.json` under the `pushover` section.
 
 ## Installation 🚀
 

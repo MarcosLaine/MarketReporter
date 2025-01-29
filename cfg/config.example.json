@@ -11,5 +11,9 @@
     "smtp": {
         "server": "smtp.gmail.com",
         "port": 587
+    },
+    "pushover": {
+        "user_key": "YOUR_USER_KEY",
+        "api_token": "YOUR_API_TOKEN"
     }
 }
