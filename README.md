@@ -99,7 +99,6 @@ MarketReporter/
 │
 ├── MarketReporter.py     # Main script
 ├── config.json           # Configuration file (not in repo)
-├── config.example.json   # Example configuration template
 ├── README.md            # This file
 └── .gitignore           # Git ignore file
 ```
