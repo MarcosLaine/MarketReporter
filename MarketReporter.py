@@ -16,13 +16,13 @@ with open('config.json', 'r') as f:
     config = json.load(f)
 
 # Pegar as cotações históricas
-tickers = ["BRL=X", "BTC-USD", "^BVSP", "^GSPC", "EURBRL=X"]
+tickers = ["BRL=X", "BTC-USD", "^BVSP", "^GSPC", "EURBRL=X", "^IXIC"]
 market_data = yf.download(tickers, period="6mo")
 market_data = market_data["Close"]
 
 # Tratar dados coletados
 market_data = market_data.dropna()
-market_data.columns = ["DOLAR", "BTC", "EURO", "IBOVESPA", "S&P500"]
+market_data.columns = ["DOLAR", "BTC", "EURO", "IBOVESPA", "S&P500", "NASDAQ"]
 
 # Criar gráficos de performance
 plt.style.use("cyberpunk")
@@ -62,6 +62,13 @@ plt.title("EURO")
 plt.savefig("euro.png")
 plt.close()
 
+# Gráfico NASDAQ
+plt.figure()
+plt.plot(market_data["NASDAQ"])
+plt.title("NASDAQ")
+plt.savefig("nasdaq.png")
+plt.close()
+
 # Calcular retornos diários
 daily_returns = market_data.pct_change()
 
@@ -70,13 +77,14 @@ ibovespa_return = daily_returns["IBOVESPA"].iloc[-1]
 sp500_return = daily_returns["S&P500"].iloc[-1]
 btc_return = daily_returns["BTC"].iloc[-1]
 euro_return = daily_returns["EURO"].iloc[-1]
+nasdaq_return = daily_returns["NASDAQ"].iloc[-1]
 
-dolar_return = str(round(dolar_return * 100, 2)) + "%"
+dolar_return = str(round(dolar_return * 100, 2)) + "%" 
 ibovespa_return = str(round(ibovespa_return * 100, 2)) + "%"
 sp500_return = str(round(sp500_return * 100, 2)) + "%"
 btc_return = str(round(btc_return * 100, 2)) + "%"
 euro_return = str(round(euro_return * 100, 2)) + "%"
-
+nasdaq_return = str(round(nasdaq_return * 100, 2)) + "%"
 # Configurar e enviar o e-mail usando Gmail
 def send_email_from_gmail():
     # Criar o objeto de mensagem
@@ -88,11 +96,12 @@ def send_email_from_gmail():
     # Corpo do e-mail
     body = f'''Opaa, segue o relatório de mercado do dia {datetime.now().strftime("%d/%m/%Y")}:
 
-    * O Ibovespa teve o retorno de {ibovespa_return}.
-    * O Dólar teve o retorno de {dolar_return}.
-    * O S&P500 teve o retorno de {sp500_return}.
-    * O BTC teve o retorno de {btc_return}.
-    * O EURO teve o retorno de {euro_return}.
+    * O Ibovespa teve o retorno de {ibovespa_return}, fechando em {market_data["IBOVESPA"].iloc[-1].round(2)}.
+    * O Dólar teve o retorno de {dolar_return}, fechando em {market_data["DOLAR"].iloc[-1].round(2)}.
+    * O S&P500 teve o retorno de {sp500_return}, fechando em {market_data["S&P500"].iloc[-1].round(2)}.
+    * O BTC teve o retorno de {btc_return}, fechando em {market_data["BTC"].iloc[-1].round(2)}.
+    * O EURO teve o retorno de {euro_return}, fechando em {market_data["EURO"].iloc[-1].round(2)}.
+    * O NASDAQ teve o retorno de {nasdaq_return}, fechando em {market_data["NASDAQ"].iloc[-1].round(2)}.
     Segue em anexo a peformance dos ativos nos últimos 6 meses.
 
     Att,
@@ -109,7 +118,8 @@ def send_email_from_gmail():
         os.path.join(base_path, "dolar.png"),
         os.path.join(base_path, "sp500.png"),
         os.path.join(base_path, "btc.png"),
-        os.path.join(base_path, "euro.png")
+        os.path.join(base_path, "euro.png"),
+        os.path.join(base_path, "nasdaq.png")
     ]
 
     for anexo in anexos:
