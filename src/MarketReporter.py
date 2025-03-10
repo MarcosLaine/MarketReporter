@@ -19,7 +19,8 @@ with open(config_path, 'r') as f:
 
 # Pegar as cotações históricas
 tickers = ["BRL=X", "BTC-USD", "^BVSP", "^GSPC", "EURBRL=X", "^IXIC"]
-market_data = yf.download(tickers, period="6mo")
+# Explicitly set auto_adjust parameter to control adjustment behavior
+market_data = yf.download(tickers, period="6mo", auto_adjust=True)
 market_data = market_data["Close"]
 
 # Tratar dados coletados
